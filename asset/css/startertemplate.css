@@ -1,0 +1,24 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 20px 5px;
+  text-align: center;
+}
+
+#formregister{
+	width: 300px;
+	height: 400px;
+	text-align: center;
+	margin: 8% auto;
+}
+
+.thumbnail{
+	text-align: center;
+}
+
+.center{
+	text-align: center;
+	margin: auto;
+}
+
