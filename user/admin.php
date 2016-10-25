@@ -58,7 +58,7 @@ if (isset($_GET['confirm'])) {
 	
 	<?php if (isset($_GET['edit'])) : ?>
 		<h3>Edit Member</h3>
-	
+<div class="row">
 		<form action="admin.php?edit=<?=$editid ;?>" method='POST'>
 			<div class="col-md-6">
 			<div class="form-group">
@@ -98,12 +98,16 @@ if (isset($_GET['confirm'])) {
             <input type="submit"  value="Kirim" class="btn btn-primary">
 		</div>
 		</form>
+</div>
 	<?php else :?>
 		<h3>Data Member</h3>
 	<?php endif; ?>
 	
 
-	<table class="table table-hover">
+	
+</div>
+<div class="row">
+<table class="table table-hover">
 		<thead>
 			<th>id</th>
 			<th>Nama Depan</th>
