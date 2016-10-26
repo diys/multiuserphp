@@ -18,10 +18,19 @@ if ($_POST) {
 		$kon = '<div class="alert alert-danger" role="alert"> Password tidak cocok </div>';
 	}
 	else{
-
+	/*dengan koneksi msqli
 	$inmember = "INSERT INTO `member` (`nama_depan`, `nama_belakang`, `email`, `password`, `alamat`, `nomertelp`) VALUES ('$nama1', '$nama2', '$email', '$password', '$alamat', '$notelp')";
 		$db->query($inmember);
-		header('Location: login.php');
+		header('Location: login.php');*/
+
+	$inmember = $db->prepare("INSERT INTO member (nama_depan, nama_belakang, email, password, alamat, nomertelp) VALUES (:nama1, :nama2, :email, :password :alamat :notelp");
+	$inmember->bindParam(':nama1',$nama1);
+	$inmember->bindParam(':nama2',$nama2);
+	$inmember->bindParam(':email',$email);
+	$inmember->bindParam(':password',$password);
+	$inmember->bindParam(':alamat',$alamat);
+	$inmember->execute();
+	header('Location: login.php');
 	}
 
 }

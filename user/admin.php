@@ -6,8 +6,14 @@ if ($_SESSION['admin'] == false) {
 	header('Location: login.php');
 }
 
+/*jika menggunakan konesi msqli
 $query = (" SELECT * FROM member");
-$resilt = $db->query($query);
+$resilt = $db->query($query);*/
+
+$query = $db->prepare("SELECT * FROM member");
+$query->execute();
+
+
 $nama1 = ((isset($_POST['namadepan']))?$_POST['namadepan'] : '');
 	$nama2 = ((isset($_POST['namabelakang']))?$_POST['namabelakang'] : '');
 	$email = ((isset($_POST['email']))?$_POST['email'] : '');
@@ -17,30 +23,53 @@ $nama1 = ((isset($_POST['namadepan']))?$_POST['namadepan'] : '');
 
 if (isset($_GET['edit']) && !empty($_GET['edit'])) {
 	$editid = $_GET['edit'];
+	/*Jika menggunkan koneksi msqli
 	$esql = "SELECT * FROM member WHERE id = '$editid'";
 	$eresult = $db->query($esql);
-	$emember = mysqli_fetch_assoc($eresult);
+	$emember = mysqli_fetch_assoc($eresult);*/
+
+	$eresult = $db->prepare("SELECT * FROM member WHERE id = :editid");
+	$eresult->bindParam(':editid', $editid);
+	$eresult->execute();
+	$emember = $eresult->fetch(PDO::FETCH_ASSOC);
 }
 
 if (isset($_GET['delete']) && !empty($_GET['delete'])) {
 	$deleteid = $_GET['delete'];
+	/*koneksi msqli
 	$dsql = "DELETE FROM `member` WHERE `member`.`id` = '$deleteid'";
-	$db->query($dsql);
+	$db->query($dsql);*/
+
+	$dsql = $db->prepare("DELETE member WHERE id = :deleteid");
+	$dsql->bindParam(':deleteid',$deleteid);
+	$dsql->query;
 	header('Location: admin.php');
 }
 if ($_POST) {
+	/*dengan koneksi msqli
 	$sql = "UPDATE `member` SET `nama_depan` = '$nama1', `nama_belakang` = '$nama2', `email` = '$email', `keangotaan` = 'anggota' WHERE `member`.`id` = '$editid' ";
-	$db->query($sql);
+	$db->query($sql);*/
+	$sql = $db->prepare("UPDATE member SET nama_depan = :nama1, nama_belakang = :nama2, email = :email, alamat = :alamat WHERE member id = :editid ");
+	$sql->bindParam(':nama1',$nama1);
+	$sql->bindParam(':nama2',$nama2);
+	$sql->bindParam(':email',$email);
+	$sql->bindParam(':alamat',$alamat);
+	$sql->execute();
 	header('Location: admin.php');
 }
 
 if (isset($_GET['confirm'])) {
 	$kid = $_GET['confirm'];
+	/*
 	$ksql = "UPDATE member SET konfirmasi = 1 WHERE id = '$kid'";
-	$db->query($ksql);
-	header('Location: admin.php');
-}
+	$db->query($ksql);*/
 
+	$ksql = $db->prepare("UPDATE member SET konfirmasi = 1 WHERE id = :id ");
+	$ksql->bindParam(':id',$kid);
+	$ksql->execute();
+	header('Location: admin.php');
+
+}
 
 ?>
 
@@ -58,7 +87,7 @@ if (isset($_GET['confirm'])) {
 	
 	<?php if (isset($_GET['edit'])) : ?>
 		<h3>Edit Member</h3>
-<div class="row">
+	<div class="row">
 		<form action="admin.php?edit=<?=$editid ;?>" method='POST'>
 			<div class="col-md-6">
 			<div class="form-group">
@@ -98,16 +127,13 @@ if (isset($_GET['confirm'])) {
             <input type="submit"  value="Kirim" class="btn btn-primary">
 		</div>
 		</form>
-</div>
+		</div>
 	<?php else :?>
 		<h3>Data Member</h3>
 	<?php endif; ?>
 	
 
-	
-</div>
-<div class="row">
-<table class="table table-hover">
+	<table class="table table-hover">
 		<thead>
 			<th>id</th>
 			<th>Nama Depan</th>
@@ -121,7 +147,8 @@ if (isset($_GET['confirm'])) {
 			<th>hapus</th>
 		</thead>
 		<tbody>
-		<?php while ($row = mysqli_fetch_assoc($resilt))  : ?>
+		
+		<?php while ($row = $query->fetch(PDO::FETCH_ASSOC)) :?>
 			<tr>
 				<td><?=$row['id'] ;?></td>
 				<td><?=$row['nama_depan'] ;?></td>

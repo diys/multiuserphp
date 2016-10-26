@@ -6,26 +6,36 @@ $email = ((isset($_POST['email']))?$_POST['email'] : '');
 $password = ((isset($_POST['password']))?$_POST['password'] : '');
 $peri = '';
 
+/*koneksi menggunkan msqli
+$query = $db->query("SELECT * FROM member WHERE email= '$email' ");
+$user = mysqli_fetch_assoc($query);
+$userc = mysqli_num_rows($query); 
+echo $userc;
+*/
+
+/*koneksi menggunan PDO*/
+$query = $db->prepare("SELECT * FROM member WHERE email = :email ");
+$query->bindParam(':email',$email);
+$query->execute();
+$user = $query->fetch(PDO::FETCH_ASSOC);
+$userc = $query->rowCount();
+
 if ($_POST) {
-  if (empty($_POST['email']) || empty($_POST['password']) ){
+    if (empty($_POST['email']) || empty($_POST['password']) ){
     $peri = '<div class="alert alert-danger" role="alert"> Password dan Email Tidak Boleh Kosong</div>';
   }
-
-  $query = $db->query("SELECT * FROM member WHERE email= '$email' ");
-  $user = mysqli_fetch_assoc($query);
-  $userc = mysqli_num_rows($query); 
-  echo $userc;
-
-  if ($peri=='' && $userc < 1 ) {
-    $peri = '<div class="alert alert-danger" role="alert"> Email tidak terdaftar silahkan Register untuk mendatar </div>';
-  }
-
-  if ($user['email'] == $email && $user['password'] == $password) {
+  else if ($user['email'] == $email && $user['password'] == $password) {
     $userid = $user['id'];
     login($userid);
-  } else {
+  } 
+  else if ($peri=='' && $userc < 1 ) {
+    $peri = '<div class="alert alert-danger" role="alert"> Email tidak terdaftar silahkan Register untuk mendatar </div>';
+  }
+  else{
     $peri = '<div class="alert alert-danger" role="alert"> Password dan Email Tidak cocok</div>';
   }
+
+  
 }
 ?>
 
